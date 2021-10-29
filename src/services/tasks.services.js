@@ -44,8 +44,37 @@ async function postTask(newTaskInfo) {
   }
 }
 
-async function putTask(id, newTask){}
+async function putTask(id, newTask){
+  try {
+    const tasks = await getTasks(); // Obtenemos todas las tareas
 
-async function deleteTask(id){}
+    // Buscamos la tarea que queremos actualizar
+    const taskIndex = tasks.findIndex((e) => e.id === id);
+
+    const updatedTask = {
+      ...tasks[taskIndex],
+      ...task,
+    }; // [tarea actualizada] Objeto final con los datos actualizados de la tarea
+
+    // Remplazar la tarea actualizada por la que se encuentra actualmente en el arreglo
+    tasks[taskIndex] = updatedTask;
+    await writeFile(tasks);
+    return updatedTask;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function deleteTask(id){
+  try {
+    const tasks = await getTasks();
+    const taskIndex = tasks.findIndex((e) => e.id === id);
+    tasks.splice(taskIndex, 1);
+    await writeTasks(tasks);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
 
 module.exports = { getTasks, getTaskById, postTask, putTask, deleteTask};
